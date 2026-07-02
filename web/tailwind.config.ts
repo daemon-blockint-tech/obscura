@@ -8,15 +8,29 @@ const config: Config = {
     extend: {
       colors: {
         obscura: {
-          dark: "#0A0E1A",
-          surface: "#131826",
-          "surface-variant": "#1C2333",
-          primary: "#6C5CE7",
-          secondary: "#00CEC9",
-          "on-surface": "#E2E8F0",
-          "on-surface-variant": "#94A3B8",
-          error: "#EF4444",
-          success: "#22C55E",
+          dark: "#09090b",
+          surface: "#18181b",
+          "surface-variant": "#27272a",
+          primary: "#10b981",
+          secondary: "#f4f4f5",
+          "on-surface": "#fafafa",
+          "on-surface-variant": "#a1a1aa",
+          error: "#f43f5e",
+          success: "#10b981",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+      },
+      animation: {
+        "shimmer": "shimmer 2s linear infinite",
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      keyframes: {
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
     },

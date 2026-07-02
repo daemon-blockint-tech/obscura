@@ -4,7 +4,8 @@ import { useState, useCallback } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { executePrivateSwap, getJupiterQuote, type JupiterQuote } from "@/lib/swap/jupiter";
-import { shortenAddress, formatTokenAmount } from "@/lib/utils/format";
+import { shortenAddress } from "@/lib/utils/format";
+import { ArrowDownUp, Spinner, Lightning } from "@phosphor-icons/react";
 
 export function SwapInterface() {
   const { publicKey, signTransaction } = useWallet();
@@ -12,7 +13,7 @@ export function SwapInterface() {
   const [inputMint, setInputMint] = useState("");
   const [outputMint, setOutputMint] = useState("");
   const [amount, setAmount] = useState("");
-  const [slippage, setSlippage] = useState("50"); // 0.5%
+  const [slippage, setSlippage] = useState("50");
   const [quote, setQuote] = useState<JupiterQuote | null>(null);
   const [status, setStatus] = useState<"idle" | "quoting" | "swapping" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -70,16 +71,21 @@ export function SwapInterface() {
   }, [publicKey, signTransaction, connection, inputMint, outputMint, amount, slippage]);
 
   return (
-    <div className="rounded-xl bg-obscura-surface p-6 border border-obscura-surface-variant">
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm text-obscura-on-surface-variant mb-1">Input Token Mint</label>
+    <div className="rounded-xl bg-obscura-surface border border-obscura-surface-variant overflow-hidden">
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-obscura-surface-variant">
+        <Lightning size={16} weight="fill" className="text-obscura-primary" />
+        <h2 className="text-sm font-semibold text-obscura-on-surface tracking-tight">Swap Interface</h2>
+      </div>
+
+      <div className="p-5 space-y-5">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-obscura-on-surface-variant">Input Token Mint</label>
           <input
             type="text"
             value={inputMint}
             onChange={(e) => setInputMint(e.target.value)}
             placeholder="Input mint address"
-            className="w-full rounded-lg bg-obscura-dark px-4 py-2 text-obscura-on-surface border border-obscura-surface-variant focus:outline-none focus:border-obscura-primary"
+            className="w-full rounded-lg bg-obscura-dark px-4 py-2.5 text-sm font-mono text-obscura-on-surface border border-obscura-surface-variant focus:outline-none focus:border-obscura-primary transition-colors"
           />
         </div>
 
@@ -90,36 +96,36 @@ export function SwapInterface() {
               setInputMint(outputMint);
               setOutputMint(tmp);
             }}
-            className="rounded-full bg-obscura-surface-variant px-4 py-2 text-obscura-on-surface-variant hover:text-obscura-primary"
+            className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-obscura-surface-variant bg-obscura-dark text-obscura-on-surface-variant hover:text-obscura-primary hover:border-obscura-primary transition-all active:scale-[0.98]"
           >
-            ↓ Swap Direction
+            <ArrowDownUp size={16} weight="bold" />
           </button>
         </div>
 
-        <div>
-          <label className="block text-sm text-obscura-on-surface-variant mb-1">Output Token Mint</label>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-obscura-on-surface-variant">Output Token Mint</label>
           <input
             type="text"
             value={outputMint}
             onChange={(e) => setOutputMint(e.target.value)}
             placeholder="Output mint address"
-            className="w-full rounded-lg bg-obscura-dark px-4 py-2 text-obscura-on-surface border border-obscura-surface-variant focus:outline-none focus:border-obscura-primary"
+            className="w-full rounded-lg bg-obscura-dark px-4 py-2.5 text-sm font-mono text-obscura-on-surface border border-obscura-surface-variant focus:outline-none focus:border-obscura-primary transition-colors"
           />
         </div>
 
-        <div>
-          <label className="block text-sm text-obscura-on-surface-variant mb-1">Amount</label>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-obscura-on-surface-variant">Amount</label>
           <input
             type="text"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.0"
-            className="w-full rounded-lg bg-obscura-dark px-4 py-2 text-obscura-on-surface border border-obscura-surface-variant focus:outline-none focus:border-obscura-primary"
+            className="w-full rounded-lg bg-obscura-dark px-4 py-2.5 text-sm font-mono text-obscura-on-surface border border-obscura-surface-variant focus:outline-none focus:border-obscura-primary transition-colors"
           />
         </div>
 
-        <div>
-          <label className="block text-sm text-obscura-on-surface-variant mb-1">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-obscura-on-surface-variant">
             Slippage ({parseFloat(slippage) / 100}%)
           </label>
           <input
@@ -134,14 +140,14 @@ export function SwapInterface() {
         </div>
 
         {quote && (
-          <div className="rounded-lg bg-obscura-dark p-4 space-y-2">
-            <div className="flex justify-between text-sm">
+          <div className="rounded-lg bg-obscura-dark border border-obscura-surface-variant p-4 divide-y divide-obscura-surface-variant/50">
+            <div className="flex justify-between text-xs py-2">
               <span className="text-obscura-on-surface-variant">Expected Output</span>
-              <span className="text-obscura-secondary">{quote.outAmount}</span>
+              <span className="font-mono text-obscura-on-surface">{quote.outAmount}</span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs py-2">
               <span className="text-obscura-on-surface-variant">Price Impact</span>
-              <span className="text-obscura-on-surface">{(quote.priceImpactPct * 100).toFixed(2)}%</span>
+              <span className="font-mono text-obscura-on-surface">{(quote.priceImpactPct * 100).toFixed(2)}%</span>
             </div>
           </div>
         )}
@@ -150,24 +156,26 @@ export function SwapInterface() {
           <button
             onClick={handleGetQuote}
             disabled={status === "quoting"}
-            className="flex-1 rounded-lg bg-obscura-surface-variant px-4 py-3 text-obscura-on-surface font-semibold hover:opacity-90 transition disabled:opacity-50"
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-obscura-surface-variant px-4 py-3 text-sm font-semibold text-obscura-on-surface transition-all hover:border-obscura-on-surface-variant active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
           >
+            {status === "quoting" && <Spinner size={16} className="animate-spin" />}
             {status === "quoting" ? "Quoting..." : "Get Quote"}
           </button>
           <button
             onClick={handleSwap}
             disabled={status === "swapping" || !publicKey || !quote}
-            className="flex-1 rounded-lg bg-obscura-primary px-4 py-3 text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-obscura-primary px-4 py-3 text-sm font-semibold text-obscura-dark transition-all hover:brightness-110 active:scale-[0.98] active:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed"
           >
+            {status === "swapping" && <Spinner size={16} className="animate-spin" />}
             {status === "swapping" ? "Swapping..." : "Execute Swap"}
           </button>
         </div>
 
         {status === "success" && (
-          <p className="text-sm text-obscura-success">{message}</p>
+          <p className="text-xs text-obscura-success font-mono">{message}</p>
         )}
         {status === "error" && (
-          <p className="text-sm text-obscura-error">{message}</p>
+          <p className="text-xs text-obscura-error font-mono">{message}</p>
         )}
       </div>
     </div>
