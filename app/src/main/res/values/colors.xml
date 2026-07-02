@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="obscura_dark">#FF0A0E1A</color>
+    <color name="obscura_surface">#FF131826</color>
+    <color name="obscura_primary">#FF6C5CE7</color>
+    <color name="obscura_secondary">#FF00CEC9</color>
+</resources>
